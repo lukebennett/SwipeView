@@ -89,7 +89,12 @@ var SwipeView = (function(){
 			this.wrapper.addEventListener('swipeview-flip', fn, false);
 			this.customEvents.push(['flip', fn]);
 		},
-		
+
+		onClick: function(fn) {
+			this.wrapper.addEventListener('swipeview-click', fn, false);
+			this.customEvents.push(['click', fn]);
+		},
+
 		onMoveOut: function (fn) {
 			this.wrapper.addEventListener('swipeview-moveout', fn, false);
 			this.customEvents.push(['moveout', fn]);
@@ -342,7 +347,10 @@ var SwipeView = (function(){
 
 			this.initiated = false;
 			
-			if (!this.moved) return;
+			if (!this.moved) {
+				this.__event('click');
+				return;
+			}
 
 			if (!this.options.loop && (this.x > 0 || this.x < this.maxX)) {
 				dist = 0;
