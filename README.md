@@ -12,3 +12,17 @@ eReader Demo: [http://cubiq.org/dropbox/SwipeView/demo/ereader](http://cubiq.org
 Inline Demo: [http://cubiq.org/dropbox/SwipeView/demo/inline](http://cubiq.org/dropbox/SwipeView/demo/inline)
 
 Screencast: [http://www.youtube.com/watch?v=Hhes5JHs8jQ](http://www.youtube.com/watch?v=Hhes5JHs8jQ)
+
+
+Additions to cubiq's version
+============================
+
+ * the proprietary transition code for webkit has been extended to cover other browsers supporting them as well.
+ * the carousel now also has a property onClick that will be fired when the control is touched, but no distance is traveled.
+
+Usage:
+    
+	carousel.onClick( function() {
+		alert( "clicked!" );
+	} );
+
