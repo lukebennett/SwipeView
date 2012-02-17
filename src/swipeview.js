@@ -2,6 +2,9 @@
  * SwipeView v0.10 ~ Copyright (c) 2011 Matteo Spinelli, http://cubiq.org
  * Released under MIT license, http://cubiq.org/license
  */
+
+var active_SwipeView = null;
+
 var SwipeView = (function(){
 	var hasTouch = 'ontouchstart' in window,
 		resizeEvent = 'onorientationchange' in window ? 'orientationchange' : 'resize',
@@ -261,10 +264,11 @@ var SwipeView = (function(){
 		__start: function (e) {
 			//e.preventDefault();
 
-			if (this.initiated) return;
+			if ( this.initiated || ( active_SwipeView != null && this != active_SwipeView ) ) return;
 			
 			var point = hasTouch ? e.touches[0] : e;
 			
+			active_SwipeView = this;
 			this.initiated = true;
 			this.moved = false;
 			this.thresholdExceeded = false;
@@ -312,6 +316,7 @@ var SwipeView = (function(){
 
 			// We are scrolling vertically, so skip SwipeView and give the control back to the browser
 			if (!this.directionLocked && this.stepsY > this.stepsX) {
+				active_SwipeView = null;
 				this.initiated = false;
 				return;
 			}
@@ -345,6 +350,7 @@ var SwipeView = (function(){
 			var point = hasTouch ? e.changedTouches[0] : e,
 				dist = Math.abs(point.pageX - this.startX);
 
+			active_SwipeView = null;
 			this.initiated = false;
 			
 			if (!this.moved) {
