@@ -12,6 +12,36 @@ var SwipeView = (function(){
 		moveEvent = hasTouch ? 'touchmove' : 'mousemove',
 		endEvent = hasTouch ? 'touchend' : 'mouseup',
 		cancelEvent = hasTouch ? 'touchcancel' : 'mouseup',
+		isDefined = function( val ) { return val != undefined; },
+		webkitTrans = { 
+			transform: 'webkitTransform', 
+			transitionDuration: 'webkitTransitionDuration', 
+			transitionTimingFunction: 'webkitTransitionTimingFunction', 
+			listener: 'webkitTransitionEnd' 
+		},
+		mozTrans = { 
+			transform: 'MozTransform', 
+			transitionDuration: 'MozTransitionDuration', 
+			transitionTimingFunction: 'MozTransitionTimingFunction', 
+			listener: 'transitionend' 
+		},
+		oTrans = { 
+			transform: 'OTransform', 
+			transitionDuration: 'OTransitionDuration', 
+			transitionTimingFunction: 'OTransitionTimingFunction', 
+			listener: 'OTransitionEnd' 
+		},
+		msTrans = { 
+			transform: 'msTransform', 
+			transitionDuration: 'msTransitionDuration', 
+			transitionTimingFunction: 'msTransitionTimingFunction', 
+			listener: 'msTransitionEnd' 
+		},
+		vendor = isDefined( document.body.style.webkitTransform ) ? webkitTrans : 
+				isDefined( document.body.style.MozTransform ) ? mozTrans :
+				isDefined( document.body.style.OTransform ) ? oTrans :
+				isDefined( document.body.style.msTransform ) ?  msTrans : 
+				undefined;
 		
 		SwipeView = function (el, options) {
 			var i,
@@ -38,11 +68,12 @@ var SwipeView = (function(){
 			
 			div = document.createElement('div');
 			div.id = 'swipeview-slider';
-			div.style.cssText = 'position:relative;top:0;height:100%;width:100%;' +
-				'-webkit-transition-duration:0;-webkit-transform:translate3d(0,0,0);-webkit-transition-timining-function:ease-out' +
-				'-moz-transition-duration:0;-moz-transform:translateX(0);-moz-transition-timining-function:ease-out' +
-				'-o-transition-duration:0;-o-transform:translateX(0);-o-transition-timining-function:ease-out' +
-				'-ms-transition-duration:0;-ms-transform:translateX(0);-ms-transition-timining-function:ease-out';
+			div.style.cssText = 'position:relative;top:0;height:100%;width:100%;';
+			if ( vendor ) {
+				div.style[vendor.transitionDuration] = 0;
+				div.style[vendor.transitionTimingFunction] = "ease-out";
+				div.style[vendor.transform] = "translateX(0)";
+			}
 			this.wrapper.appendChild(div);
 			this.slider = div;
 
@@ -51,8 +82,11 @@ var SwipeView = (function(){
 			for (i=-1; i<2; i++) {
 				div = document.createElement('div');
 				div.id = 'swipeview-masterpage-' + (i+1);
-				div.style.cssText = '-webkit-transform:translateZ(0);-moz-transform:translateZ(0);-o-transform:translateZ(0);-ms-transform:translateZ(0);' +
-					'position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
+				
+				div.style.cssText = 'position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
+				if ( vendor ) 
+					div.style[vendor.transform] = "translateZ(0)";
+
 				if (!div.dataset) div.dataset = {};
 				pageIndex = i == -1 ? this.options.numberOfPages - 1 : i;
 				div.dataset.pageIndex = pageIndex;
@@ -71,11 +105,10 @@ var SwipeView = (function(){
 			this.wrapper.addEventListener(startEvent, this, false);
 			this.wrapper.addEventListener(moveEvent, this, false);
 			this.wrapper.addEventListener(endEvent, this, false);
-			this.slider.addEventListener('webkitTransitionEnd', this, false);
-			this.slider.addEventListener('transitionend', this, false);
-			this.slider.addEventListener('OTransitionEnd', this, false);
-			this.slider.addEventListener('MSTransitionEnd', this, false);
-
+			
+			if ( vendor )
+				this.slider.addEventListener( vendor.listener, this, false );
+			
 /*			if (!hasTouch) {
 				this.wrapper.addEventListener('mouseout', this, false);
 			}*/
@@ -126,7 +159,9 @@ var SwipeView = (function(){
 			this.wrapper.removeEventListener(startEvent, this, false);
 			this.wrapper.removeEventListener(moveEvent, this, false);
 			this.wrapper.removeEventListener(endEvent, this, false);
-			this.slider.removeEventListener('webkitTransitionEnd', this, false);
+			
+			if ( vendor )
+				this.slider.removeEventListener( vendor.listener, this, false );
 
 /*			if (!hasTouch) {
 				this.wrapper.removeEventListener('mouseout', this, false);
@@ -162,7 +197,10 @@ var SwipeView = (function(){
 			p = p < 0 ? 0 : p > this.options.numberOfPages-1 ? this.options.numberOfPages-1 : p;
 			this.page = p;
 			this.pageIndex = p;
-			this.slider.style.webkitTransitionDuration = '0';
+			
+			if ( vendor ) 
+				this.slider.style[vendor.transitionDuration] = '0';
+			
 			this.__pos(-p * this.pageWidth);
 
 			this.currentMasterPage = (this.page + 1) - Math.floor((this.page + 1) / 3) * 3;
@@ -246,18 +284,17 @@ var SwipeView = (function(){
 		 */
 		__pos: function (x) {
 			this.x = x;
-			this.slider.style.webkitTransform = 'translate3d(' + x + 'px,0,0)';
-			this.slider.style.MozTransform = 'translateX(' + x + 'px)';
-			this.slider.style.OTransform = 'translateX(' + x + 'px)';
-			this.slider.style.msTransform = 'translateX(' + x + 'px)';
+			
+			if ( vendor )
+				this.slider.style[vendor.transform] = 'translateX(' + x + 'px)';
 		},
 
 		__resize: function () {
 			this.refreshSize();
-			this.slider.style.webkitTransitionDuration = '0';
-			this.slider.style.MozTransitionDuration = '0';
-			this.slider.style.OTransitionDuration = '0';
-			this.slider.style.msTransitionDuration = '0';
+			
+			if ( vendor )
+				this.slider.style[vendor.transitionDuration] = '0';
+
 			this.__pos(-this.page * this.pageWidth);
 		},
 
@@ -284,10 +321,8 @@ var SwipeView = (function(){
 /*			var matrix = getComputedStyle(this.slider, null).webkitTransform.replace(/[^0-9-.,]/g, '').split(',');
 			this.x = matrix[4] * 1;*/
 
-			this.slider.style.webkitTransitionDuration = '0';
-			this.slider.style.MozTransitionDuration = '0';
-			this.slider.style.OTransitionDuration = '0';
-			this.slider.style.msTransitionDuration = '0';
+			if ( vendor )
+				this.slider.style[vendor.transitionDuration] = '0';
 
 			this.__event('touchstart');
 		},
@@ -371,11 +406,9 @@ var SwipeView = (function(){
 
 			// Check if we exceeded the snap threshold
 			if (dist < this.snapThreshold) {
-				this.slider.style.webkitTransitionDuration = '300ms';
-				this.slider.style.MozTransitionDuration = '300ms';
-				this.slider.style.OTransitionDuration = '300ms';
-				this.slider.style.msTransitionDuration = '300ms';
-
+				
+				if ( vendor )
+					this.slider.style[vendor.transitionDuration] = '300ms';
 				
 				this.__pos(-this.page * this.pageWidth);
 				return;
@@ -425,12 +458,8 @@ var SwipeView = (function(){
 			pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / this.options.numberOfPages) * this.options.numberOfPages;
 			this.masterPages[pageFlip].dataset.upcomingPageIndex = pageFlipIndex;		// Index to be loaded in the newly flipped page
 
-			this.slider.style.webkitTransitionDuration = '500ms';
-			this.slider.style.MozTransitionDuration = '500ms';
-			this.slider.style.OTransitionDuration = '500ms';
-			this.slider.style.msTransitionDuration = '500ms';
-
-
+			if ( vendor )
+				this.slider.style[vendor.transitionDuration] = '500ms';
 
 			newX = -this.page * this.pageWidth;
 
