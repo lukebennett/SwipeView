@@ -350,13 +350,19 @@ var SwipeView = (function(){
 			var point = hasTouch ? e.changedTouches[0] : e,
 				dist = Math.abs(point.pageX - this.startX);
 
-			active_SwipeView = null;
 			this.initiated = false;
 			
 			if (!this.moved) {
+				active_SwipeView = null;
 				this.__event('click');
 				return;
 			}
+
+			// wait a couple of milliseconds before unsetting in order to be still
+			// set for click events checking whether we're swiping or not.
+			window.setTimeout( function() {
+					active_SwipeView = null;
+				}, 500 );
 
 			if (!this.options.loop && (this.x > 0 || this.x < this.maxX)) {
 				dist = 0;
