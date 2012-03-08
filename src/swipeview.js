@@ -55,7 +55,8 @@ var SwipeView = (function(){
 				numberOfPages: 3,
 				snapThreshold: null,
 				hastyPageFlip: false,
-				loop: true
+				loop: true,
+				handleMouseSwiping: true
 			}
 
 			// User defined options
@@ -101,10 +102,12 @@ var SwipeView = (function(){
 			className = this.masterPages[1].className;
 			this.masterPages[1].className = !className ? 'swipeview-active' : className + ' swipeview-active';
 
-			window.addEventListener(resizeEvent, this, false);
-			this.wrapper.addEventListener(startEvent, this, false);
-			this.wrapper.addEventListener(moveEvent, this, false);
-			this.wrapper.addEventListener(endEvent, this, false);
+			if ( hasTouch || this.options.handleMouseSwiping ) {
+				window.addEventListener(resizeEvent, this, false);
+				this.wrapper.addEventListener(startEvent, this, false);
+				this.wrapper.addEventListener(moveEvent, this, false);
+				this.wrapper.addEventListener(endEvent, this, false);
+			}
 
 			if ( vendor )
 				this.slider.addEventListener( vendor.listener, this, false );
