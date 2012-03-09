@@ -26,3 +26,5 @@ Usage:
 		alert( "clicked!" );
 	} );
 
+ * a global `active_SwipeView` is exposed to be able to nest SwipeViews in SwipeViews and avoid triggering swipes on more than.
+ * a new option `handleMouseSwiping` can be set when constructing a new SwipeView object. It defines whether or not mouse swiping should be enabled. Especially when there are native elements (select boxes f.e.) it can happen that dragstart is triggered, producing wierd results.
