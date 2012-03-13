@@ -56,7 +56,8 @@ var SwipeView = (function(){
 				snapThreshold: null,
 				hastyPageFlip: false,
 				loop: true,
-				handleMouseSwiping: true
+				handleMouseSwiping: true,
+				id: "swipeview"
 			}
 
 			// User defined options
@@ -68,7 +69,7 @@ var SwipeView = (function(){
 			this.masterPages = [];
 
 			div = document.createElement('div');
-			div.id = 'swipeview-slider';
+			div.id = this.options.id + '-slider';
 			div.style.cssText = 'position:relative;top:0;height:100%;width:100%;';
 			if ( vendor ) {
 				div.style[vendor.transitionDuration] = 0;
@@ -82,7 +83,7 @@ var SwipeView = (function(){
 
 			for (i=-1; i<2; i++) {
 				div = document.createElement('div');
-				div.id = 'swipeview-masterpage-' + (i+1);
+				div.id = this.options.id + '-masterpage-' + (i+1);
 
 				div.style.cssText = 'position:absolute;top:0;height:100%;width:100%;left:' + i*100 + '%';
 				if ( vendor )
