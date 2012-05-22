@@ -37,10 +37,11 @@ var SwipeView = (function(){
 			transitionTimingFunction: 'msTransitionTimingFunction',
 			listener: 'msTransitionEnd'
 		},
-		vendor = isDefined( document.body.style.webkitTransform ) ? webkitTrans :
-				isDefined( document.body.style.MozTransform ) ? mozTrans :
-				isDefined( document.body.style.OTransform ) ? oTrans :
-				isDefined( document.body.style.msTransform ) ?  msTrans :
+		elem = document.createElement('swipeview'),
+		vendor = isDefined( elem.style.webkitTransform ) ? webkitTrans :
+				isDefined( elem.style.MozTransform ) ? mozTrans :
+				isDefined( elem.style.OTransform ) ? oTrans :
+				isDefined( elem.style.msTransform ) ?  msTrans :
 				undefined;
 
 		SwipeView = function (el, options) {
