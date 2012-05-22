@@ -350,6 +350,7 @@ var SwipeView = (function(){
 			// We take a 10px buffer to figure out the direction of the swipe
 			if (this.stepsX < 10 && this.stepsY < 10) {
 //				e.preventDefault();
+				this.moved = false;
 				return;
 			}
 
@@ -357,6 +358,7 @@ var SwipeView = (function(){
 			if (!this.directionLocked && this.stepsY > this.stepsX) {
 				active_SwipeView = null;
 				this.initiated = false;
+				this.moved = false;
 				return;
 			}
 
